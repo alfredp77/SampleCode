@@ -1,2 +1,2 @@
-# VendingMachineApp
-Sample code for demonstrating greener unit test.
+# SampleCode
+Sample code for my technical blogs.
