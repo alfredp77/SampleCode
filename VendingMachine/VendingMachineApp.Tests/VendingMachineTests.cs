@@ -13,8 +13,8 @@ namespace VendingMachineApp.Tests
         public void Setup()
         {
             _machine = new VendingMachine();
-            _item1 = new Item {Id = "snack1", Price = 2};
-            _item2 = new Item {Id = "snack2", Price = 2.5m};
+            _item1 = new Item {Id = "snack1", Price = 2, Quantity = 100};
+            _item2 = new Item {Id = "snack2", Price = 2.5m, Quantity = 100};
             _machine.Initialize(new[]{_item1, _item2}.ToDictionary(k => k.Id));
         }
 
@@ -24,7 +24,7 @@ namespace VendingMachineApp.Tests
             _machine.SelectItem(_item1.Id);
             _machine.Deposit(1);
             Assert.That(_machine.Dispense(), Is.EqualTo(DispensedItem.Empty));
-
+            
             _machine.Deposit(1);
             var dispensed = _machine.Dispense();
             Assert.That(dispensed.ItemId, Is.EqualTo(_item1.Id));
@@ -109,6 +109,15 @@ namespace VendingMachineApp.Tests
             Assert.That(_machine.TotalDeposit, Is.EqualTo(0));
             Assert.That(_machine.SelectedItem, Is.Null);
             Assert.That(_machine.Dispense(), Is.EqualTo(DispensedItem.Empty));
+        }
+
+        [Test]
+        public void Should_Not_Allow_Selecting_Item_With_No_Stock()
+        {
+            _item1.Quantity = 0;
+            _machine.SelectItem(_item1.Id);
+
+            Assert.That(_machine.Message, Is.EqualTo($"{_item1.Id} is out of stock."));
         }
     }
 }

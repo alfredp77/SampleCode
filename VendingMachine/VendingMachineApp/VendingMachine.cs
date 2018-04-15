@@ -19,10 +19,18 @@ namespace VendingMachineApp
         public string SelectedItem { get; private set; }
         public void SelectItem(string itemId)
         {
-            if (_items.ContainsKey(itemId))
+            if (_items.TryGetValue(itemId, out var item))
             {
-                SelectedItem = itemId;
-                Message = null;
+                if (item.Quantity > 0)
+                {
+                    SelectedItem = itemId;
+                    Message = null;
+                }
+                else
+                {
+                    Message = $"{item.Id} is out of stock.";
+                }
+                
             }
             else
             {
