@@ -32,7 +32,8 @@ namespace VendingMachineApp.Tests
 
         [Test]
         public void Should_Not_Dispense_Item_When_Not_Enough_Money_Is_Deposited()
-        {           
+        {
+            _item1.Price = 2;
             _machine.SelectItem(_item1.Id);
             _machine.Deposit(1);
             Assert.That(_machine.Dispense(), Is.EqualTo(DispensedItem.Empty));
@@ -41,9 +42,11 @@ namespace VendingMachineApp.Tests
 
         [Test]
         public void Should_Dispense_Item_When_Enough_Money_Is_Deposited()
-        {           
+        {
+            _item1.Price = 2;
             _machine.SelectItem(_item1.Id);
-            _machine.Deposit(2);
+            _machine.Deposit(1);
+            _machine.Deposit(1);
 
             var dispensed = _machine.Dispense();
             Assert.That(dispensed.ItemId, Is.EqualTo(_item1.Id));
@@ -117,7 +120,18 @@ namespace VendingMachineApp.Tests
             _item1.Quantity = 0;
             _machine.SelectItem(_item1.Id);
 
+            Assert.Null(_machine.SelectedItem, $"There should not be any selected item, but we have one: {_machine.SelectedItem}");
             Assert.That(_machine.Message, Is.EqualTo($"{_item1.Id} is out of stock."));
+        }
+
+        [Test]
+        public void Should_Allow_Selecting_Item_With_Available_Stock()
+        {
+            _item1.Quantity = 100;
+            _machine.SelectItem(_item1.Id);
+
+            Assert.That(_machine.SelectedItem, Is.EqualTo(_item1.Id));
+            Assert.Null(_machine.Message, $"Expecting no messages, but got: {_machine.Message}");            
         }
     }
 }
